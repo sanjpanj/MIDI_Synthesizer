@@ -1,0 +1,102 @@
+Information: Updating design information... (UID-85)
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : APB_slave
+Version: K-2015.06-SP1
+Date   : Tue Apr 24 14:36:26 2018
+****************************************
+
+Operating Conditions: typical   Library: osu05_stdcells
+Wire Load Model Mode: top
+
+  Startpoint: midiout_reg[31]
+              (positive level-sensitive latch)
+  Endpoint: MIDI_Data[31]
+            (output port)
+  Path Group: (none)
+  Path Type: max
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  midiout_reg[31]/CLK (LATCH)              0.00       0.00 r
+  midiout_reg[31]/Q (LATCH)                0.32       0.32 f
+  MIDI_Data[31] (out)                      0.00       0.32 f
+  data arrival time                                   0.32
+  -----------------------------------------------------------
+  (Path is unconstrained)
+
+
+1
+ 
+****************************************
+Report : area
+Design : APB_slave
+Version: K-2015.06-SP1
+Date   : Tue Apr 24 14:36:26 2018
+****************************************
+
+Library(s) Used:
+
+    osu05_stdcells (File: /package/eda/cells/OSU/v2.7/synopsys/lib/ami05/osu05_stdcells.db)
+
+Number of ports:                           70
+Number of nets:                           129
+Number of cells:                           92
+Number of combinational cells:             50
+Number of sequential cells:                42
+Number of macros/black boxes:               0
+Number of buf/inv:                          7
+Number of references:                       9
+
+Combinational area:              13230.000000
+Buf/Inv area:                     1008.000000
+Noncombinational area:            4752.000000
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (No wire load specified)
+
+Total cell area:                 17982.000000
+Total area:                 undefined
+1
+Loading db file '/package/eda/cells/OSU/v2.7/synopsys/lib/ami05/osu05_stdcells.db'
+Information: Propagating switching activity (low effort zero delay simulation). (PWR-6)
+Warning: Design has unannotated primary inputs. (PWR-414)
+Warning: Design has unannotated sequential cell outputs. (PWR-415)
+ 
+****************************************
+Report : power
+        -hier
+        -analysis_effort low
+Design : APB_slave
+Version: K-2015.06-SP1
+Date   : Tue Apr 24 14:36:26 2018
+****************************************
+
+
+Library(s) Used:
+
+    osu05_stdcells (File: /package/eda/cells/OSU/v2.7/synopsys/lib/ami05/osu05_stdcells.db)
+
+
+Operating Conditions: typical   Library: osu05_stdcells
+Wire Load Model Mode: top
+
+
+Global Operating Voltage = 5    
+Power-specific unit information :
+    Voltage Units = 1V
+    Capacitance Units = 1.000000pf
+    Time Units = 1ns
+    Dynamic Power Units = 1mW    (derived from V,C,T units)
+    Leakage Power Units = 1nW
+
+
+--------------------------------------------------------------------------------
+                                       Switch   Int      Leak     Total
+Hierarchy                              Power    Power    Power    Power    %
+--------------------------------------------------------------------------------
+APB_slave                                 1.121    6.701   11.675    7.821 100.0
+1

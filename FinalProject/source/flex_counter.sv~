@@ -1,0 +1,101 @@
+// $Id: $
+// File name:   flex_counter.sv
+// Created:     2/1/2018
+// Author:      Sanjay Rao
+// Lab Section: 337-07
+// Version:     1.0  Initial Design Entry
+// Description: Flexible and Scalable Counter with Controlled Rollover
+
+module flex_counter
+#(
+	NUM_CNT_BITS = 4
+)
+(
+	input wire clk, n_rst, clear, count_enable,
+	input wire [NUM_CNT_BITS-1:0] rollover_val,
+	output reg [NUM_CNT_BITS-1:0] count_out,
+	output reg rollover_flag
+);
+	reg [NUM_CNT_BITS-1:0] next_count;
+	reg next_flag;
+	
+
+	always_ff @ (posedge clk, negedge n_rst)
+   	begin
+      		if(n_rst == 0)
+		begin
+			rollover_flag <= 1'b0;
+	       		count_out <= '0;
+		end
+		else
+		begin
+			rollover_flag <= next_flag;
+			count_out <= next_count;
+		end
+	end
+//next state for count_out
+	always_comb
+	begin
+		if(clear)
+		begin
+			next_count = '0;
+	   	end
+		else
+		begin
+			if(count_enable)
+			begin
+				if(count_out < rollover_val)
+					next_count = count_out+1;
+				else
+					next_count = 1;
+			end
+			else
+				next_count = count_out;
+		end
+
+	end
+
+  
+//next state for rollover_flag
+	always_comb 
+	begin
+		next_flag = 0;
+		if(count_enable)
+		begin
+			if(next_count == rollover_val)
+				next_flag = 1;
+		end
+		else
+		begin
+			if(count_out == rollover_val)
+				next_flag = 1;
+		end
+			
+	end
+
+	
+  
+
+
+
+endmodule
+
+
+			
+			
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

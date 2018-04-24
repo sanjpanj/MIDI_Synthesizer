@@ -1,0 +1,45 @@
+// $Id: $
+// File name:   flex_stp_sr.sv
+// Created:     2/1/2018
+// Author:      Sanjay Rao
+// Lab Section: 337-07
+// Version:     1.0  Initial Design Entry
+// Description: N-Bit Serial-to-Parallel Shift Register Design
+
+module flex_stp_sr
+#(
+	NUM_BITS = 4,
+	SHIFT_MSB = 1
+)
+(
+	input wire clk, n_rst, shift_enable, serial_in,
+	output reg [NUM_BITS-1:0] parallel_out
+);
+	reg [NUM_BITS-1:0] next;
+
+	always_ff @ (posedge clk, negedge n_rst)
+	begin
+		if(n_rst == 1'b0)
+			parallel_out <= '1;
+		else
+			parallel_out <= next;
+			
+	end
+//next state logic
+	always_comb
+	begin
+		if(shift_enable == 1)
+		begin
+			if(SHIFT_MSB == 1)
+				next = {parallel_out[NUM_BITS-2:0], serial_in};
+			else
+				next = {serial_in, parallel_out[NUM_BITS-1:1]};
+		end
+		else
+			next = parallel_out;
+			
+	end
+endmodule
+			
+
+

@@ -1,0 +1,9 @@
+// $Id: $
+// File name:   tb_edge_detect.sv
+// Created:     2/22/2018
+// Author:      Sanjay Rao
+// Lab Section: 337-07
+// Version:     1.0  Initial Design Entry
+// Description: test bench for edge_detect.sv
+
+//MODIFIED DUE TO GRADE NOT REPORTED

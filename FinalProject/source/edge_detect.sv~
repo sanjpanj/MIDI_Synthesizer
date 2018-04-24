@@ -1,0 +1,41 @@
+// $Id: $
+// File name:   edge_detect.sv
+// Created:     2/22/2018
+// Author:      Sanjay Rao
+// Lab Section: 337-07
+// Version:     1.0  Initial Design Entry
+// Description: At each positive clock edge, the edge_detect block will compare the d_plus with the value of d_plus during the previous clock cycle, and output a 1 when the bit on the d_plus line does not match the stored bit, and a 0 when the value on the line matches the stored bit (just an XOR). This signal is used to synchronize the timer block.
+module edge_detect(
+	input wire clk,
+	input wire n_rst,
+	input wire d_plus,
+	output reg d_edge
+);
+	
+	reg dpbit,dpstored;
+	reg dpnext,dpnext2;
+	
+	always_comb begin
+		dpnext = d_plus;
+		dpnext2 = dpbit;
+	end
+	
+	always_ff@ (posedge clk,negedge n_rst) begin
+		if (n_rst == 0) begin
+			dpbit <= 1;
+			dpstored <= 1;
+		end
+		else begin
+			dpbit <= dpnext;
+			dpstored <= dpnext2;
+		end
+	end
+
+	always_comb begin
+		if (dpbit == dpstored)
+			d_edge = 0;
+		else
+			d_edge = 1;
+	end
+endmodule
+

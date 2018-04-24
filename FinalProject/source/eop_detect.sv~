@@ -1,0 +1,20 @@
+// $Id: $
+// File name:   eop_detect.sv
+// Created:     2/22/2018
+// Author:      Sanjay Rao
+// Lab Section: 337-07
+// Version:     1.0  Initial Design Entry
+// Description: eop_detect block (simple combinational logic)
+module eop_detect(
+	input wire d_plus,
+	input wire d_minus,
+	output reg eop
+);
+	
+	always_comb begin
+		if ((d_plus == 0)&&(d_minus == 0))
+			eop = 1;
+		else
+			eop = 0;
+	end
+endmodule

@@ -1,0 +1,277 @@
+// $Id: $
+// File name:   rcu.sv
+// Created:     3/1/2018
+// Author:      Sanjay Rao
+// Lab Section: 337-07
+// Version:     1.0  Initial Design Entry
+// Description: The RCU (receiver control block) is in charge of the operation of the entire receiver. This block follows directly from the state transition diagram created.
+
+module rcu
+(
+	input wire clk, n_rst, d_edge, eop, shift_enable,
+	input wire [7:0] rcv_data,
+	input wire byte_received, 
+	output reg rcving, w_enable, r_error
+);
+
+	typedef enum bit [4:0] {BEGIN, IDLE, COMPLETE, VERIFSYNC, INCOMPLETE, CONTINUE, STORE, EOP, IDLE2, STAGNANT, STAGNANT2} stateType;
+	stateType state, next_state;
+
+	always_ff @ (negedge n_rst, posedge clk)
+	begin
+		if( n_rst == 0)
+		begin
+			state <= IDLE;
+		end
+		else
+			state <= next_state;
+	end
+
+	///////////////////////////////////////////////////////////////
+
+	always_comb
+	begin
+		next_state = state;
+		case(state)
+			IDLE:
+			begin
+				if (d_edge == 1)
+				begin
+					next_state = BEGIN;
+				end
+			end
+			
+			IDLE2:
+			begin
+				if (d_edge == 1)
+				begin
+					next_state = STAGNANT2;
+				end
+			end
+			
+			STAGNANT:
+			begin
+				if (d_edge == 1)
+				begin
+					next_state = IDLE;
+				end
+			end
+
+
+			STAGNANT2:
+			begin
+				if (d_edge == 1)
+				begin
+					next_state = BEGIN;
+				end
+			end
+			
+			BEGIN:
+			begin
+				if(byte_received == 1)
+				begin
+					next_state = VERIFSYNC;
+				end
+			end
+
+			VERIFSYNC:
+			begin
+				if(rcv_data == 8'b10000000)
+				begin
+					next_state = COMPLETE;
+				end
+				else
+				begin
+					next_state = INCOMPLETE;
+				end
+			end
+
+			COMPLETE:
+			begin
+				next_state = CONTINUE;
+			end
+
+			INCOMPLETE:
+			begin
+				if (eop == 1 && shift_enable == 1)
+				begin
+					next_state = IDLE2;
+				end
+			end
+
+			CONTINUE:
+			begin
+				if(byte_received == 1)
+				begin
+					next_state = STORE;
+				end
+				else if (eop == 1)
+				begin
+					next_state = IDLE2;
+				end
+			end
+			STORE:
+			begin
+				next_state = EOP;
+			end
+
+			EOP:
+			begin
+				if(eop == 1 && shift_enable == 1)
+				begin
+					next_state = STAGNANT;
+				end
+				else if( eop == 0 && shift_enable == 1)
+				begin
+					next_state = CONTINUE;
+				end
+			end
+
+			
+		endcase
+	end
+
+	/////////////////////////////////////////
+	//OUTPUTS
+
+	always_comb
+	begin
+		begin
+		rcving = 1;
+		r_error = 0;
+		w_enable = 0;
+		end
+		
+		
+	case(state)
+		
+		IDLE2:
+		begin
+			rcving = 0;
+			r_error = 1;
+		end
+		
+		STAGNANT2:
+		begin
+			rcving = 0;
+			r_error = 1;
+		end
+
+		IDLE:
+			rcving = 0;
+		STORE:
+			w_enable = 1;
+		INCOMPLETE:
+			r_error = 1;
+		
+	endcase
+	end
+
+endmodule
+				
+				
+			
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

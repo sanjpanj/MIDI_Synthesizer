@@ -1,0 +1,49 @@
+// $Id: $
+// File name:   usb_receiver.sv
+// Created:     2/23/2018
+// Author:      Sanjay Rao
+// Lab Section: 337-07
+// Version:     1.0  Initial Design Entry
+// Description: This is the top-level design file that connects all of the other functional unit design files. 
+
+module usb_receiver(
+	input wire clk,
+	input wire n_rst,
+	input wire d_plus,
+	input wire d_minus,
+	input wire r_enable,
+	output reg [7:0]r_data,
+	output reg empty,
+	output reg full,
+	output reg rcving,
+	output reg r_error
+);
+	reg d_plus_sync,d_minus_sync;
+	reg [7:0]rcv_data;
+
+	sync_high yf_1 (.clk(clk), .n_rst(n_rst), .async_in(d_plus), .sync_out(d_plus_sync));
+	sync_low yf_2 (.clk(clk), .n_rst(n_rst), .async_in(d_minus), .sync_out(d_minus_sync));
+	eop_detect yf_3(.d_plus(d_plus_sync), .d_minus(d_minus_sync), .eop(eop));
+	decode yf_4 (.clk(clk), .n_rst(n_rst), .d_plus(d_plus_sync), .shift_enable(shift_enable), .eop(eop), .d_orig(d_orig));
+	edge_detect yf_5 (.clk(clk), .n_rst(n_rst), .d_plus(d_plus_sync), .d_edge(d_edge));
+	timer yf_6 (.clk(clk), .n_rst(n_rst), .d_edge(d_edge), .rcving(rcving), .shift_enable(shift_enable), .byte_received(byte_received));
+	shift_register yf_7(.clk(clk), .n_rst(n_rst), .shift_enable(shift_enable), .d_orig(d_orig), .rcv_data(rcv_data));
+	rx_fifo yf_8 (.clk(clk), .n_rst(n_rst), .r_enable(r_enable), .w_enable(w_enable), .w_data(rcv_data), .r_data(r_data), .empty(empty), .full(full));
+	rcu yf_gg(.clk(clk), .n_rst(n_rst), .d_edge(d_edge), .eop(eop), .shift_enable(shift_enable), .rcv_data(rcv_data),
+		 .byte_received(byte_received), .rcving(rcving), .w_enable(w_enable), .r_error(r_error));
+endmodule
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+

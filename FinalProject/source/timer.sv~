@@ -1,0 +1,42 @@
+// $Id: $
+// File name:   timer.sv
+// Created:     2/23/2018
+// Author:      Sanjay Rao
+// Lab Section: 337-07
+// Version:     1.0  Initial Design Entry
+// Description: This timer block outputs the shift_enable and byte_receive lines.
+
+module timer
+(
+	input wire clk, n_rst, d_edge, rcving,
+	output wire shift_enable, byte_received
+);
+
+	reg [3:0] fincount;
+
+
+	flex_counter #(4) count1
+	(
+
+		.clk(clk),
+		.n_rst(n_rst),
+		.clear(d_edge == 1 || rcving == 0),
+		.count_enable(rcving),
+		.rollover_val(4'd8),
+		.count_out(fincount)
+		
+	);
+
+	assign shift_enable = (fincount == 2); //fincount
+
+	flex_counter #(4) count2
+	(
+		.clk(clk),
+		.n_rst(n_rst),
+		.clear(rcving == 0 || byte_received == 1),
+		.count_enable(shift_enable),
+		.rollover_val(4'd8),
+		.rollover_flag(byte_received)
+	);
+
+endmodule

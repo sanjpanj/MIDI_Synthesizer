@@ -1,0 +1,109 @@
+// $Id: $
+// File name:   tb_usb_receiver.sv
+// Created:     3/1/2018
+// Author:      Sanjay Rao
+// Lab Section: 337-07
+// Version:     1.0  Initial Design Entry
+// Description: Testing USB
+
+`timescale 1ns / 10ps
+
+module tb_usb_receiver();
+	// Define parameters
+	parameter CLK_PERIOD = 10.42;
+	parameter DATA_PERIOD = (8 * CLK_PERIOD);
+	//DUT inputs
+	reg tb_clk, tb_n_rst, tb_d_plus, tb_d_minus, tb_r_enable;
+	reg [7:0] tb_r_data;
+	//DUT outputs
+	reg tb_empty, tb_full, tb_rcving, tb_r_error;
+	// Overall test case number for reference
+	integer testcase;
+	// task input
+	reg [7:0] test_data;
+	//DUT map
+	usb_receiver DUT
+	(
+		.clk(tb_clk),
+		.n_rst(tb_n_rst),
+		.d_plus(tb_d_plus),
+		.d_minus(tb_d_minus),
+		.r_enable(tb_r_enable),
+		.r_data(tb_r_data),
+		.empty(tb_empty),
+		.full(tb_full),
+		.rcving(tb_rcving),
+		.r_error(tb_r_error)
+	);
+	// Generate clk
+	always
+	begin
+		tb_clk = 1'b0;
+		#(CLK_PERIOD/2.0);
+		tb_clk = 1'b1;
+		#(CLK_PERIOD/2.0);
+	end
+
+	task send_packet;
+		input [7:0] data;
+		integer i;
+	begin
+		@(negedge tb_clk)
+		for(i = 0; i < 8; i = i + 1)
+		begin
+			tb_d_plus = data[i];
+			tb_d_minus = ~data[i];
+			#(CLK_PERIOD*8);
+		end
+	end
+	endtask
+
+	task send_eop;
+	begin
+		//@(negedge tb_clk)
+		tb_d_plus = 0;
+		tb_d_minus = 0;
+		#(CLK_PERIOD*2*8);
+		tb_d_plus = 1;
+		tb_d_minus = 0;
+		#(CLK_PERIOD*8);
+	end
+	endtask
+		
+
+
+	initial
+	begin
+		
+		testcase = 0;
+		tb_n_rst = 0;
+		#(CLK_PERIOD*8);
+		tb_n_rst = 1;
+		#(CLK_PERIOD*8);
+		
+		testcase = 1;
+		@(negedge tb_clk);
+		tb_d_plus = 1;
+		tb_d_minus = 0;	
+		#(CLK_PERIOD*8);
+		
+		testcase = 2;
+		test_data = 8'b00011000;
+		send_packet(test_data);
+		#(CLK_PERIOD*8);
+		test_data = 8'b00011000;
+		send_packet(test_data);
+		
+		send_eop;
+
+
+
+
+	
+		
+	end
+
+
+endmodule
+
+

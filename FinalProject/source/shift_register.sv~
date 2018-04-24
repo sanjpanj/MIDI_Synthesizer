@@ -1,0 +1,19 @@
+// $Id: $
+// File name:   shift_register.sv
+// Created:     2/23/2018
+// Author:      Sanjay Rao
+// Lab Section: 337-07
+// Version:     1.0  Initial Design Entry
+// Description: The shift register will store 1 byte of incoming values and hold these values while they are read into the FIFO buffer. The USB data is sent least-significant bit first, so the shift register should shift so that the data ultimately has the least-significant (first) bit on the right and the most-significant (last) bit on the left.
+
+module shift_register(
+	input wire clk,
+	input wire n_rst,
+	input wire shift_enable,
+	input wire d_orig,
+	output reg [7:0]rcv_data
+);
+	flex_stp_sr yf1 (.clk(clk), .n_rst(n_rst), .shift_enable(shift_enable), .serial_in(d_orig), .parallel_out(rcv_data));
+
+endmodule
+

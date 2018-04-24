@@ -1,0 +1,94 @@
+// $Id: $
+// File name:   VariableClockDivider.sv
+// Created:     4/13/2018
+// Author:      Ben Yanek
+// Lab Section: 337-07
+// Version:     1.0  Initial Design Entry
+// Description: VariableClockDivider.sv
+module VariableClockDivider
+(
+	input clk,
+	input n_rst,
+	input [7:0] Note_Pitch,
+	output [15:0] address,
+	input [7:0] read_data,
+	output [15:0] Lookup_Index
+);
+		
+reg [15:0] Rollover_Val;
+reg [7:0] Prev_Note_Pitch;
+reg Rollover_Flag;
+reg [15:0]addressreg;
+reg Flag;
+reg Clear;
+reg Enable;
+reg New_Data;
+reg [15:0] Count;
+reg [15:0] WaveformVal;
+reg [7:0] readdata1;
+reg [7:0] readdata2;
+
+assign address = addressreg;
+assign Rollover_Val = {readdata1, readdata2};
+//assign address[15:8] = 8'b00000000;
+//assign address[7:0] = Note_Pitch * 2; 
+assign Clear = Note_Pitch[7];
+assign Enable = ~Clear; 
+assign Lookup_Index[15:0] = WaveformVal * 2 + 256;
+
+flex_counter #(.NUM_CNT_BITS(16)) flex1 (.clk(clk), .n_rst(n_rst), .clear(Clear), .count_enable(Enable), .rollover_val(Rollover_Val), .count_out(Count), .rollover_flag(Rollover_Flag));
+flex_counter #(.NUM_CNT_BITS(8)) flex2 (.clk(clk), .n_rst(n_rst), .clear(Clear), .count_enable(Rollover_Flag), .rollover_val(8'hFF), .count_out(WaveformVal), .rollover_flag(Flag));
+//SRAMController sc (.clk(clk), .n_rst(n_rst), .New_Data(New_Data), .address(address), .read_data(Rollover_Val));
+
+typedef enum bit [2:0] {IDLE, NEW_ADDRESS1, WAIT1, NEW_ADDRESS2, WAIT2} stateType;
+stateType state;
+stateType next_state;
+
+always_ff @(posedge clk, negedge n_rst)
+begin
+	if(n_rst == 0)
+		state <= IDLE;
+	else
+		state <= next_state;
+end
+
+always_comb
+begin
+	case(state)
+	IDLE:
+	begin
+		if(Note_Pitch == Prev_Note_Pitch)
+			next_state = IDLE;
+		else
+			next_state = NEW_ADDRESS1;
+	end
+	NEW_ADDRESS1:
+	begin
+		addressreg[15:8] = 8'b00000000;
+		addressreg[7:0] = Note_Pitch * 2;	
+		next_state = WAIT1;
+	end
+	WAIT1:
+	begin
+		readdata1 = read_data[7:0];
+		next_state = NEW_ADDRESS2;
+	end
+	NEW_ADDRESS2:
+	begin
+		addressreg[15:8] = 8'b00000000;
+		addressreg[7:0] = Note_Pitch * 2 + 1;
+		next_state = WAIT2;
+	end
+	WAIT2:
+	begin
+		readdata2 = read_data[7:0];
+		next_state = IDLE;
+	end
+	default:
+	begin
+		next_state = IDLE;
+	end
+	endcase
+end
+
+endmodule

@@ -1,0 +1,44 @@
+// $Id: $
+// File name:   decode.sv
+// Created:     2/22/2018
+// Author:      Sanjay Rao
+// Lab Section: 337-07
+// Version:     1.0  Initial Design Entry
+// Description: The decode block is responsible for removing the NRZ encoding from incoming data. The block will store the incoming bit present on the rising edge of the clk line when shift_enable is high, then output a 1 as long as the current input and the stored value match, or a 0 if the current input and the stored input differ (just an XNOR). 
+module decode(
+		input wire clk,
+		input wire n_rst,
+		input wire d_plus,
+		input wire shift_enable,
+		input wire eop,
+		output reg d_orig
+);
+
+		reg nextcurrent,nextstore;
+
+		reg current,stored;
+		
+		always_comb begin
+			nextcurrent = d_plus;
+			nextstore = stored;
+			if (shift_enable == 1) 
+				nextstore = d_plus;
+			if ((eop == 1) && (shift_enable == 1)) begin
+					nextstore = 1;
+					nextcurrent = 1;
+			end
+
+			d_orig = (current == stored);
+		end
+		
+		always_ff@ (posedge clk,negedge n_rst) begin
+			if (n_rst == 0) begin 
+				current <= 1;
+				stored <= 1;
+			end
+			else begin
+				current <= nextcurrent;
+				stored <= nextstore;
+			end
+		end
+endmodule

@@ -1,0 +1,129 @@
+Information: Updating design information... (UID-85)
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : usb_receiver
+Version: K-2015.06-SP1
+Date   : Thu Mar  8 22:47:44 2018
+****************************************
+
+Operating Conditions: typical   Library: osu05_stdcells
+Wire Load Model Mode: top
+
+  Startpoint: RCU/state_reg[0]
+              (rising edge-triggered flip-flop)
+  Endpoint: rcving (output port)
+  Path Group: (none)
+  Path Type: max
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  RCU/state_reg[0]/CLK (DFFSR)             0.00       0.00 r
+  RCU/state_reg[0]/Q (DFFSR)               0.63       0.63 f
+  RCU/U78/Y (INVX1)                        0.34       0.97 r
+  RCU/U77/Y (NOR2X1)                       0.41       1.38 f
+  RCU/U76/Y (NAND3X1)                      0.19       1.57 r
+  RCU/U75/Y (INVX1)                        0.22       1.79 f
+  RCU/U11/Y (NOR2X1)                       0.11       1.90 r
+  RCU/U10/Y (NAND3X1)                      0.07       1.97 f
+  RCU/U7/Y (OR2X1)                         0.23       2.20 f
+  RCU/rcving (rcu)                         0.00       2.20 f
+  rcving (out)                             0.00       2.20 f
+  data arrival time                                   2.20
+  -----------------------------------------------------------
+  (Path is unconstrained)
+
+
+1
+ 
+****************************************
+Report : area
+Design : usb_receiver
+Version: K-2015.06-SP1
+Date   : Thu Mar  8 22:47:44 2018
+****************************************
+
+Library(s) Used:
+
+    osu05_stdcells (File: /package/eda/cells/OSU/v2.7/synopsys/lib/ami05/osu05_stdcells.db)
+
+Number of ports:                          233
+Number of nets:                           924
+Number of cells:                          726
+Number of combinational cells:            502
+Number of sequential cells:               206
+Number of macros/black boxes:               0
+Number of buf/inv:                        138
+Number of references:                       9
+
+Combinational area:             144432.000000
+Buf/Inv area:                    20520.000000
+Noncombinational area:          166176.000000
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (No wire load specified)
+
+Total cell area:                310608.000000
+Total area:                 undefined
+1
+Loading db file '/package/eda/cells/OSU/v2.7/synopsys/lib/ami05/osu05_stdcells.db'
+Information: Propagating switching activity (low effort zero delay simulation). (PWR-6)
+Warning: There is no defined clock in the design. (PWR-80)
+Warning: Design has unannotated primary inputs. (PWR-414)
+Warning: Design has unannotated sequential cell outputs. (PWR-415)
+ 
+****************************************
+Report : power
+        -hier
+        -analysis_effort low
+Design : usb_receiver
+Version: K-2015.06-SP1
+Date   : Thu Mar  8 22:47:45 2018
+****************************************
+
+
+Library(s) Used:
+
+    osu05_stdcells (File: /package/eda/cells/OSU/v2.7/synopsys/lib/ami05/osu05_stdcells.db)
+
+
+Operating Conditions: typical   Library: osu05_stdcells
+Wire Load Model Mode: top
+
+
+Global Operating Voltage = 5    
+Power-specific unit information :
+    Voltage Units = 1V
+    Capacitance Units = 1.000000pf
+    Time Units = 1ns
+    Dynamic Power Units = 1mW    (derived from V,C,T units)
+    Leakage Power Units = 1nW
+
+
+--------------------------------------------------------------------------------
+                                       Switch   Int      Leak     Total
+Hierarchy                              Power    Power    Power    Power    %
+--------------------------------------------------------------------------------
+usb_receiver                           8.66e-02   13.212   93.465   13.299 100.0
+  SHIFT_REG (shift_register)           7.37e-03    1.042    5.550    1.049   7.9
+    SHIFT (flex_stp_sr_NUM_BITS8_SHIFT_MSB0)
+                                       7.37e-03    1.042    5.550    1.049   7.9
+  TIMER (timer)                        3.38e-03    1.025   10.495    1.028   7.7
+    second (flex_counter_0)            4.50e-04    0.512    5.136    0.512   3.9
+    first (flex_counter_1)             2.79e-03    0.513    5.136    0.516   3.9
+  DECODE (decode)                      5.79e-03    0.277    1.559    0.282   2.1
+  EOP (eop_detect)                     5.48e-03 1.95e-03 5.10e-02 7.43e-03   0.1
+  EDGE (edge_detect)                   4.41e-03    0.272    1.246    0.277   2.1
+  SYNC_L (sync_low)                    6.38e-03    0.418    1.066    0.424   3.2
+  SYNCH (sync_high)                    1.17e-02    0.469    1.066    0.480   3.6
+  RCU (rcu)                            5.25e-03    0.419    6.823    0.424   3.2
+  FIFO (rx_fifo)                       3.69e-02    9.289   65.610    9.326  70.1
+    done (fifo)                        3.69e-02    9.289   65.610    9.326  70.1
+      URFC (read_fifo_ctrl)            3.69e-02    2.103   13.466    2.140  16.1
+        RPU1 (read_ptr)                1.07e-03    0.822    5.746    0.823   6.2
+      UWFC (write_fifo_ctrl)              0.000    2.047   13.547    2.047  15.4
+        WPU1 (write_ptr)                  0.000    0.819    5.746    0.819   6.2
+      UFIFORAM (fiforam)                  0.000    5.139   38.597    5.139  38.6
+1
